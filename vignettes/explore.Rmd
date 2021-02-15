@@ -1,0 +1,100 @@
+---
+title: "explore"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{explore}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(pins)
+library(ggplot2)
+library(dplyr)
+library(lubridate)
+# create connection to pins board
+board_register_dospace()
+df <- pin_get("hotshots_race_results", board = "dospace")
+```
+
+
+## Explore the data
+
+```{r}
+df
+```
+
+## Convert times
+
+```{r}
+my_options <- options(digits.secs = 3)     # Modify and save default global options
+x <- "02:56.499"
+x2 <- as.numeric(as.difftime(x, format="%M:%OS", units="secs"))
+x2
+
+strptime(x, "%M:%OS")
+
+```
+
+## Tidy racing data
+
+1. Replace last `:` with `.`
+2. treat DNF as NA
+3. Create a numeric version of the race times in seconds
+4. Create factor versions of track and grand prix to preserve ordering
+
+```{r}
+
+data(hotshot_data)
+
+grand_prix_order <- names(hotshot_data$grand_prix)
+track_order <- purrr::simplify(hotshot_data$grand_prix)
+names(track_order) <- NULL
+
+df2 <- df %>%
+  mutate(player_time = stringi::stri_replace_last(player_time, replacement = ".", regex = "\\:"),
+         race_time = as.numeric(as.difftime(player_time, format="%M:%OS", units="secs")),
+         grand_prix_fct = factor(grand_prix, levels = grand_prix_order),
+         track_fct = factor(track, levels = track_order))
+
+df2
+```
+
+## Generate summary statistics
+
+First we compute the total points earned in each half of the grand prix (normal and mirrored). In the event that racers are tied with points, the first tiebreaker is the number of first-place finishes. If that is still tied, then it is the number of second place finishes.  If that is still tied, then it is the number of third place finishes.  At that point if they are still tied, then it is alphabetical order. Then we compute the grand prix place order using the points metadata.
+
+```{r}
+
+data(hotshot_points)
+
+df_summary1 <- df2 %>%
+  group_by(grand_prix_fct, direction, player_name) %>%
+  summarize(race_points_total = sum(points, na.rm = TRUE)) %>%
+  arrange(grand_prix_fct, direction, desc(race_points_total)) %>%
+  mutate(position = row_number()) %>%
+  ungroup() %>%
+  left_join(hotshot_points, by = "position")
+
+df_summary1
+```
+
+Assuming grand prix is complete, we can use the above set to get the total points
+
+```{r}
+df_summary2 <- df_summary1 %>%
+  group_by(grand_prix_fct, player_name) %>%
+  summarize(total_gp_points = sum(points, na.rm = TRUE)) %>%
+  ungroup() %>%
+  arrange(grand_prix_fct, desc(total_gp_points))
+
+df_summary2
+```
+
