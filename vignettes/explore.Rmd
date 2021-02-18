@@ -77,11 +77,19 @@ data(hotshot_points)
 
 df_summary1 <- df2 %>%
   group_by(grand_prix_fct, direction, player_name) %>%
-  summarize(race_points_total = sum(points, na.rm = TRUE)) %>%
-  arrange(grand_prix_fct, direction, desc(race_points_total)) %>%
-  mutate(position = row_number()) %>%
+  summarize(race_points_total = sum(points, na.rm = TRUE),
+            n_races = n(),
+            n_first = sum(position == 1),
+            n_second = sum(position == 2),
+            n_third = sum(position == 3),
+            n_top3 = sum(position <= 3)) %>%
+  arrange(grand_prix_fct, desc(direction), desc(race_points_total), desc(n_first), desc(n_second), desc(n_third)) %>%
+  #mutate(position = row_number()) %>%
   ungroup() %>%
-  left_join(hotshot_points, by = "position")
+  group_by(grand_prix_fct, direction) %>%
+  mutate(position = row_number()) %>%
+  left_join(hotshot_points, by = "position") %>%
+  ungroup()
 
 df_summary1
 ```
@@ -91,9 +99,25 @@ Assuming grand prix is complete, we can use the above set to get the total point
 ```{r}
 df_summary2 <- df_summary1 %>%
   group_by(grand_prix_fct, player_name) %>%
-  summarize(total_gp_points = sum(points, na.rm = TRUE)) %>%
+  summarize(total_gp_points = sum(points, na.rm = TRUE),
+            n_races = sum(n_races),
+            n_top3 = sum(n_top3),
+            n_first_race = sum(n_first),
+            n_first_gp = sum(position == 1),
+            n_second_gp = sum(position == 2),
+            n_third_gp = sum(position == 3)) %>%
   ungroup() %>%
-  arrange(grand_prix_fct, desc(total_gp_points))
+  arrange(grand_prix_fct, desc(total_gp_points), desc(n_first_gp), desc(n_second_gp), desc(n_third_gp)) %>%
+  group_by(player_name) %>%
+  summarize(total_points = sum(total_gp_points),
+            n_races = sum(n_races),
+            n_top3 = sum(n_top3),
+            n_first_race = sum(n_first_race),
+            n_first_gp = sum(n_first_gp),
+            n_second_gp = sum(n_second_gp),
+            n_third_gp = sum(n_third_gp)) %>%
+  ungroup() %>%
+  arrange(desc(total_points), desc(n_first_gp), desc(n_second_gp), desc(n_third_gp))
 
 df_summary2
 ```

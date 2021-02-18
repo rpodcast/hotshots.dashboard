@@ -18,6 +18,10 @@
 usethis::use_package( "pins" )
 usethis::use_package( "bslib" )
 usethis::use_package( "thematic" )
+usethis::use_package( "dplyr" )
+usethis::use_package( "purrr" )
+usethis::use_package( "stringi" )
+usethis::use_package( "reactable" )
 
 
 ## Add modules ----
@@ -27,7 +31,7 @@ golem::add_module( name = "name_of_module2" ) # Name of the module
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
-golem::add_fct( "helpers" ) 
+golem::add_fct( "data_helpers" ) 
 golem::add_utils( "helpers" )
 
 ## External resources
