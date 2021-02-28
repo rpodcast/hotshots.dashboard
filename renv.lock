@@ -107,6 +107,25 @@
       "Repository": "RSPM",
       "Hash": "36758510e65a457efeefa50e1e7f0576"
     },
+    "broom": {
+      "Package": "broom",
+      "Version": "0.7.4",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "3cca8477943a8e840c3eb64a25fef9d2"
+    },
+    "bs4Dash": {
+      "Package": "bs4Dash",
+      "Version": "2.0.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "RinteRface",
+      "RemoteRepo": "bs4Dash",
+      "RemoteRef": "master",
+      "RemoteSha": "6fb8f8175e3672bbb65236d76285c6310197f10c",
+      "Hash": "2a923f347962d53c6687cc0fc9f882b0"
+    },
     "bslib": {
       "Package": "bslib",
       "Version": "0.2.4",
@@ -149,6 +168,13 @@
       "Repository": "RSPM",
       "Hash": "abea3384649ef37f60ef51ce002f3547"
     },
+    "colourpicker": {
+      "Package": "colourpicker",
+      "Version": "1.1.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "fe0cb3d8854c168aef827aeab4b3b473"
+    },
     "commonmark": {
       "Package": "commonmark",
       "Version": "1.7",
@@ -162,6 +188,32 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "31d77b09f63550cee9ecb5a08bf76e8f"
+    },
+    "corrplot": {
+      "Package": "corrplot",
+      "Version": "0.84",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "b55c32ae818a84109a51f172290c95f2"
+    },
+    "countrycode": {
+      "Package": "countrycode",
+      "Version": "1.2.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "c46036853ef73486af84ec5dc5b2443f"
+    },
+    "countup": {
+      "Package": "countup",
+      "Version": "0.1.1",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "JohnCoene",
+      "RemoteRepo": "countup",
+      "RemoteRef": "master",
+      "RemoteSha": "e8d8c6f65e6f021a59b7d6e46b7601a20eabef85",
+      "Hash": "ab73b0c9f226152c90477b79a39eff2f"
     },
     "covr": {
       "Package": "covr",
@@ -205,6 +257,13 @@
       "Repository": "RSPM",
       "Hash": "2b7d10581cc730804e9ed178c8374bd6"
     },
+    "data.table": {
+      "Package": "data.table",
+      "Version": "1.13.6",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "813fa8857aaa949b243e2e0b4abb8592"
+    },
     "desc": {
       "Package": "desc",
       "Version": "1.2.0",
@@ -247,12 +306,36 @@
       "Repository": "RSPM",
       "Hash": "01c82e3b053eb7660a8ace8d932265b8"
     },
+    "echarts4r": {
+      "Package": "echarts4r",
+      "Version": "0.4.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "JohnCoene",
+      "RemoteRepo": "echarts4r",
+      "RemoteRef": "master",
+      "RemoteSha": "8c10263a064b6d9c693eeead9fbfbd5058f515ce",
+      "Hash": "77ace0ec5bfcf4cdb07a276c543b9f64"
+    },
     "ellipsis": {
       "Package": "ellipsis",
       "Version": "0.3.1",
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "fd2844b3a43ae2d27e70ece2df1b4e2a"
+    },
+    "emo": {
+      "Package": "emo",
+      "Version": "0.0.0.9000",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "hadley",
+      "RemoteRepo": "emo",
+      "RemoteRef": "master",
+      "RemoteSha": "3f03b11491ce3d6fc5601e210927eff73bf8e350",
+      "Hash": "5ece31a6c0f94811e6bef59482d87164"
     },
     "evaluate": {
       "Package": "evaluate",
@@ -288,6 +371,13 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "38ec653c2613bed60052ba3787bd8a2c"
+    },
+    "fresh": {
+      "Package": "fresh",
+      "Version": "0.2.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "fa54367040deb4537da49b7ac0ee5770"
     },
     "fs": {
       "Package": "fs",
@@ -506,6 +596,13 @@
       "Repository": "CRAN",
       "Hash": "e87a35ec73b157552814869f45a63aa3"
     },
+    "miniUI": {
+      "Package": "miniUI",
+      "Version": "0.1.1.1",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "fec5f52652d60615fdb3957b3d74324a"
+    },
     "munsell": {
       "Package": "munsell",
       "Version": "0.5.0",
@@ -562,6 +659,13 @@
       "Repository": "RSPM",
       "Hash": "b6b150cd4709e0c0c9b5d51ac4376282"
     },
+    "plotly": {
+      "Package": "plotly",
+      "Version": "4.9.3",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "f6b85d9e4ed88074ea0ede1aa74bb00e"
+    },
     "praise": {
       "Package": "praise",
       "Version": "1.0.0",
@@ -617,6 +721,20 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "ed95895886dab6d2a584da45503555da"
+    },
+    "reactR": {
+      "Package": "reactR",
+      "Version": "0.4.3",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "85d50afbf95bf92bda97e9417575e8ff"
+    },
+    "reactable": {
+      "Package": "reactable",
+      "Version": "0.2.3",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "ac1afe50d1c77470a72971a07fd146b1"
     },
     "rematch2": {
       "Package": "rematch2",
@@ -716,6 +834,20 @@
       "Repository": "RSPM",
       "Hash": "6e3b6ae7fe02b5859e4bb277f218b8ae"
     },
+    "shinyWidgets": {
+      "Package": "shinyWidgets",
+      "Version": "0.5.7",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "67f284ca3b12634dfabbbb5c247f5966"
+    },
+    "shinyjs": {
+      "Package": "shinyjs",
+      "Version": "2.0.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "9ddfc91d4280eaa34c2103951538976f"
+    },
     "sourcetools": {
       "Package": "sourcetools",
       "Version": "0.1.7",
@@ -765,6 +897,13 @@
       "Repository": "RSPM",
       "Hash": "9c6c10e594f32096ede0c7d373ccbddd"
     },
+    "tidyr": {
+      "Package": "tidyr",
+      "Version": "1.1.2",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "c40b2d5824d829190f4b825f4496dfae"
+    },
     "tidyselect": {
       "Package": "tidyselect",
       "Version": "1.1.0",
@@ -806,6 +945,13 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "ce4f6271baa94776db692f1cb2055bee"
+    },
+    "waiter": {
+      "Package": "waiter",
+      "Version": "0.2.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "58bd688fb765cf778b633df0e2502003"
     },
     "waldo": {
       "Package": "waldo",

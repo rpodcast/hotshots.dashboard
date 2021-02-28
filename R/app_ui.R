@@ -31,51 +31,7 @@ app_ui <- function(request) {
   # pmap magic
   boxes <- purrr::pmap(box_config, box_factory)
   
-  my_theme <- create_theme(
-    bs4dash_vars(
-      navbar_light_color = "#bec5cb",
-      navbar_light_active_color = "#FFF",
-      navbar_light_hover_color = "#FFF"
-    ),
-    bs4dash_yiq(
-      contrasted_threshold = 10,
-      text_dark = "#FFF", 
-      text_light = "#272c30"
-    ),
-    bs4dash_layout(
-      main_bg = "#353c42"
-    ),
-    bs4dash_sidebar_light(
-      bg = "#272c30", 
-      color = "#bec5cb",
-      hover_color = "#FFF",
-      submenu_bg = "#272c30", 
-      submenu_color = "#FFF", 
-      submenu_hover_color = "#FFF"
-    ),
-    bs4dash_status(
-      primary = "#5E81AC", danger = "#BF616A", light = "#272c30"
-    ),
-    bs4dash_color(
-      gray_900 = "#FFF"
-    ),
-    bs4dash_font(
-      family_base = 'TTSupermolotNeue-Bold'
-    )
-  )
-  
-  # my_theme <- bs_theme(
-  #   bg = "#0090f9", 
-  #   fg = "#f0f0e6", 
-  #   primary = "#71cc65", 
-  #   base_font = font_face(
-  #     family = 'TTSupermolotNeue-Bold',
-  #     src = 'TTSupermolotNeue-Bold.eot',
-  #     weight = 'normal',
-  #     style = 'normal',
-  #     display = 'swap'
-  #   )
-  # )
+  my_theme <- hotshot_theme()
   
   tagList(
     # Leave this function for adding external resources
@@ -84,25 +40,55 @@ app_ui <- function(request) {
     dashboardPage(
       freshTheme = my_theme,
       header = dashboardHeader(
-        leftUi = dropdownMenu(
-          type = "messages",
-          badgeStatus = "success",
-          messageItem(
-            from = "Support Team",
-            message = "This is the content of a message.",
-            time = "5 mins"
-          ),
-          messageItem(
-            from = "Support Team",
-            message = "This is the content of another message.",
-            time = "2 hours"
+        skin = "light",
+        tagList(
+          shinyWidgets::actionBttn(
+            "refresh",
+            "Refresh Data",
+            style = "unite",
+            icon = icon("download"),
+            size = "sm"
           )
         )
       ),
-      sidebar = dashboardSidebar(),
-      body = dashboardBody(boxes),
+      sidebar = dashboardSidebar(
+        skin = "light",
+        sidebarMenu(
+          id = "sidebarMenu",
+          menuItem(
+            text = "Overview",
+            tabName = "tab1"
+          ),
+          menuItem(
+            text = "Leaderboard",
+            tabName = "tab2"
+          ),
+          menuItem(
+            text = "GP & Track Stats",
+            tabName = "tab3"
+          )
+        )
+      ),
+      body = dashboardBody(
+        #boxes
+        tabItems(
+          tabItem(
+            tabName = "tab1",
+            mod_welcome_ui("welcome_ui_1")
+          ),
+          tabItem(
+            tabName = "tab2",
+            mod_leaderboard_ui("leaderboard_ui_1")
+          ),
+          tabItem(
+            tabName = "tab3",
+            mod_trackstats_ui("trackstats_ui_1")
+          )
+        )
+      ),
       controlbar = dashboardControlbar(),
-      title = "Fresh theming"
+      title = "Fresh theming",
+      dark = FALSE
     )
     # fluidPage(
     #   #theme = my_theme,

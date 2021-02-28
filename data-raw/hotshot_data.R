@@ -316,7 +316,7 @@ hotshot_data <- list(
         )
     ),
     tracks = list(
-        coast = c("marina", "ocean_world", "sea_view", "surf_city"),
+        coast = c("marina", "ocean_world", "heated_highway", "sea_view", "surf_city"),
         desert = c("area_41", "boneyard", "casino_run", "downtown", "8_ball_highway"),
         jungle = c("temple_drive", "royal_roadway", "dino_dash", "temple_ruins", "cargo_chaos"),
         mountain = c("castle_funfair", "fossil_cave", "alpine_town", "ski_paradise", "frozen_freeway")

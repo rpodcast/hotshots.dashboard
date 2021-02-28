@@ -26,12 +26,16 @@ usethis::use_package( "reactable" )
 
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module( name = "name_of_module1" ) # Name of the module
-golem::add_module( name = "name_of_module2" ) # Name of the module
+golem::add_module( name = "welcome" ) # Name of the module
+golem::add_module( name = "refresh" )
+golem::add_module( name = "leaderboard" ) # Name of the module
+golem::add_module( name = "trackstats" ) # Name of the module
 
 ## Add helper functions ----
 ## Creates ftc_* and utils_*
 golem::add_fct( "data_helpers" ) 
+golem::add_fct( "table_helpers" )
+golem::add_utils( "ui_helpers" )
 golem::add_utils( "helpers" )
 
 ## External resources
@@ -43,7 +47,8 @@ golem::add_css_file( "custom" )
 ## Add internal datasets ----
 ## If you have data in your package
 usethis::use_data_raw( name = "hotshot_data", open = FALSE ) 
-
+usethis::use_data_raw( name = "country_data", open = FALSE ) 
+usethis::use_data_raw( name = "player_data", open = FALSE )
 ## Tests ----
 ## Add one line by test you want to create
 usethis::use_test( "app" )
