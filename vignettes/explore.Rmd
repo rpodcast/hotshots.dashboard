@@ -34,6 +34,30 @@ df <- pin_get("hotshots_race_results", board = "dospace")
 df
 ```
 
+## finish changes (consecutive)
+
+```{r}
+df2 <- gen_tidy_race_data(df)
+
+df2 <- df2 %>%
+  arrange(grand_prix_fct, player_name, direction_fct, track_fct) %>%
+  group_by(grand_prix_fct, player_name, direction_fct) %>%
+  mutate(previous_position = lag(position)) %>%
+  ungroup() %>%
+  mutate(position_diff = previous_position - position)
+  #select(player_name, direction_fct, track_fct, position, position_diff)
+  
+select(df2, player_name, direction_fct, track_fct, position, position_diff)
+```
+
+```{r}
+df2 %>%
+  filter(grand_prix_fct == "tour") %>%
+  e_charts() %>%
+  e_histogram(position_diff)
+```
+
+
 ## Create Grand Prix Stat Charts
 
 ```{r}
