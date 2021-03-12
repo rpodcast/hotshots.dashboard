@@ -88,7 +88,9 @@ app_ui <- function(request) {
       ),
       controlbar = dashboardControlbar(),
       title = "Fresh theming",
-      dark = FALSE
+      dark = FALSE,
+      fullscreen = TRUE,
+      scrollToTop = TRUE
     )
     # fluidPage(
     #   #theme = my_theme,

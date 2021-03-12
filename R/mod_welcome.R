@@ -311,30 +311,47 @@ mod_welcome_server <- function(input, output, session, hotshot_stat_df){
     }
     
     df_chart <- dplyr::mutate(df_chart, plot_var = .data[[input$plot_stat]])
+    df_chart <- distinct(df_chart)
+    
+    # join additoinal player metadata
+    df_chart <- left_join(
+      df_chart,
+      select(player_data, player_name, plot_emoji),
+      by = "player_name"
+    )
+    
+    df_chart <- mutate(df_chart, plot_emoji2 = purrr::map_chr(plot_emoji, ~emo::ji(.x)))
     
     n_players <- length(unique(df_chart$player_name))
     
     plot_ly(df_chart) %>%
-      add_segments(
-        y = ~player_name, 
-        yend = ~player_name, 
-        x = ~plot_var, 
-        xend = 0, 
+      # add_segments(
+      #   y = ~player_name,
+      #   yend = ~player_name,
+      #   x = ~plot_var,
+      #   xend = 0,
+      #   color = ~player_name,
+      #   colors = RColorBrewer::brewer.pal(n_players, "Set3"),
+      #   frame = ~frame_label_fct,
+      #   line = list(width = 40)
+      # ) %>%
+      # add_markers(
+      #   x = ~plot_var,
+      #   y = ~player_name,
+      #   color = ~player_name,
+      #   colors = RColorBrewer::brewer.pal(n_players, "Set3"),
+      #   size = I(90),
+      #   frame = ~frame_label_fct
+      # ) %>%
+      add_text(
+        x = ~plot_var,
+        y = ~player_name,
+        text = ~plot_emoji2,
         color = ~player_name,
         colors = RColorBrewer::brewer.pal(n_players, "Set3"),
-        frame = ~frame_label_fct,
-        line = list(width = 40)
+        size = I(50),
+        frame = ~frame_label_fct
       ) %>%
-      # layout(
-      #   annotations = list(
-      #     x = df_chart$points_running,
-      #     y = df_chart$player_name,
-      #     text = df_chart$points_running,
-      #     xanchor = "left",
-      #     yanchor = "center",
-      #     showarrow = FALSE
-      #   )
-      # ) %>%
       animation_slider(
         currentvalue = list(
           prefix = ""
