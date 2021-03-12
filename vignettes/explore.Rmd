@@ -28,11 +28,71 @@ df <- pin_get("hotshots_race_results", board = "dospace")
 ```
 
 
+## obtain cars used up to this point
+
+```{r}
+
+gen_tidy_racers <- function(df) {
+    res <- df %>%
+      tibble::as_tibble(.) %>%
+      tidyr::unnest_wider(col = "drivers") %>%
+      tidyr::unnest_longer(col = "cars") %>%
+      tidyr::unnest_wider(col = "cars")
+    return(res)
+}
+
+used_cars <- df %>%
+  select(driver, car) %>%
+  distinct() %>%
+  arrange(driver, car)
+
+df %>%
+  filter(grand_prix == "hotshot") %>%
+  select(driver, car) %>%
+  distinct() %>%
+  arrange(driver, car)
+
+
+#openxlsx::write.xlsx(used_cars, file = "used_cars.xlsx")
+
+hd <- hotshot_data
+hd$grand_prix <- NULL
+hd$tracks <- NULL
+available_cars <- gen_tidy_racers(hd) %>%
+  filter(!car_name %in% used_cars$car) %>%
+  select(driver_name, car_name)
+
+openxlsx::write.xlsx(available_cars, file = "avail_cars.xlsx")
+```
+
+
+
 ## Explore the data
 
 ```{r}
 df
 ```
+
+## Create a season table
+
+The goal is to have an overall season table that has one row per racing session, and then leverage `reactable` to create nested contents expandable within the rows and have each row selectable to show additional metrics in the app UI. I've seen nice examples from [racing-reference.info](https://www.racing-reference.info/season-stats/2020/W/).  Since our scoring system assigns points for the overall standings after the normal and mirrored races, it seems to make sense to do it this way.
+
+First we derive the necessary point totals with a custom function
+
+```{r}
+df_gp <- df %>%
+  gen_tidy_race_data() %>%
+  gen_summary_gp_data()
+
+df_gp
+```
+
+Let's try creating a nested table so we have one row per grand prix entry.  But first we can compute some gp-level metrics in a separate df
+
+```{r}
+
+```
+
 
 ## finish changes (consecutive)
 
