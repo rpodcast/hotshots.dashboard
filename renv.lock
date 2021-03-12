@@ -624,6 +624,20 @@
       "Repository": "RSPM",
       "Hash": "a399e4773075fc2375b71f45fca186c4"
     },
+    "openxlsx": {
+      "Package": "openxlsx",
+      "Version": "4.2.3",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "2253a430965e222d11a2f9277cd34c2e"
+    },
+    "packrat": {
+      "Package": "packrat",
+      "Version": "0.5.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "2ebd34a38f4248281096cc723535b66d"
+    },
     "pillar": {
       "Package": "pillar",
       "Version": "1.4.7",
@@ -736,6 +750,18 @@
       "Repository": "RSPM",
       "Hash": "ac1afe50d1c77470a72971a07fd146b1"
     },
+    "reactablefmtr": {
+      "Package": "reactablefmtr",
+      "Version": "0.1.0",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "kcuilla",
+      "RemoteRepo": "reactablefmtr",
+      "RemoteRef": "main",
+      "RemoteSha": "611b6af7ecb2337fa8d9635eecca79b1ed7ea17e",
+      "Hash": "d5c5332fbea4149a32fef00d0613555a"
+    },
     "rematch2": {
       "Package": "rematch2",
       "Version": "2.1.2",
@@ -791,6 +817,13 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "249d8cd1e74a8f6a26194a91b47f21d1"
+    },
+    "rsconnect": {
+      "Package": "rsconnect",
+      "Version": "0.8.16",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "3924a1c20ce2479e89a08b0ca4c936c6"
     },
     "rstudioapi": {
       "Package": "rstudioapi",
