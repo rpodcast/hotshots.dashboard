@@ -1,28 +1,10 @@
 #' @import dplyr
 #' @import reactable
 #' @noRd
-create_leaderboard <- function(raw_df) {
-  # generate overall data
-  df_position <- raw_df %>%
-    gen_tidy_race_data() %>%
-    gen_summary_gp_data()
-  
-  df_overall <- gen_summary_overall(df_position) %>%
-    arrange(desc(total_points)) %>%
-    mutate(position = row_number()) %>%
-    mutate(position_emo = case_when(
-      position == 1 ~ "1st_place_medal",
-      position == 2 ~ "2nd_place_medal",
-      position == 3 ~ "3rd_place_medal",
-      position == 8 ~ "8ball",
-      TRUE ~ "checkered_flag"
-    )) %>%
-    left_join(player_data, by = "player_name") %>%
-    left_join(country_data, by = "country") %>%
-    select(position_emo, player_name, country, url, total_points)
-  
+create_leaderboard <- function(df_position, df_overall) {
+
   df_position <- df_position %>%
-    select(grand_prix_fct, direction, player_name, position, points, n_top3)
+    select(grand_prix_fct, direction, player_name, position, points, n_top3, n_races)
   
   # define reactable object
   res <- reactable(
@@ -60,7 +42,7 @@ create_leaderboard <- function(raw_df) {
     details = function(index) {
       player_selected <- dplyr::slice(df_overall, index) %>% dplyr::pull(player_name)
       gp_df <- filter(df_position, player_name == !!player_selected) %>%
-        select(., -player_name)
+        select(., -player_name, -n_races)
       htmltools::div(
         style = "padding: 12px",
         reactable(
@@ -92,6 +74,38 @@ create_leaderboard <- function(raw_df) {
     )
   )
 }
+
+#' @import dplyr
+#' @import reactable
+#' @noRd
+create_gp_table <- function(df_position, player_selected = NULL) {
+  if (is.null(player_selected)) {
+    gp_df <- df_position %>%
+      select(., -n_races)
+  } else {
+    gp_df <- filter(df_position, player_name == !!player_selected) %>%
+      select(., -player_name, -n_races)
+  }
+  
+  res <- reactable(
+    gp_df, 
+    theme = reactableTheme(
+      color = "hsl(233, 9%, 87%)",
+      backgroundColor = "hsl(233, 9%, 19%)",
+      borderColor = "hsl(233, 9%, 22%)",
+      stripedColor = "hsl(233, 12%, 22%)",
+      highlightColor = "hsl(233, 12%, 24%)",
+      inputStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+      selectStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+      pageButtonHoverStyle = list(backgroundColor = "hsl(233, 9%, 25%)"),
+      pageButtonActiveStyle = list(backgroundColor = "hsl(233, 9%, 28%)")
+    ),
+    outlined = TRUE)
+  
+  return(res)
+}
+  
+  
 
 #' @import dplyr
 #' @import reactable
@@ -141,3 +155,4 @@ create_track_table <- function(raw_df) {
   
   return(res)
 }
+
