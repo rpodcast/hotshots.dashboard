@@ -62,7 +62,7 @@ available_cars <- gen_tidy_racers(hd) %>%
   filter(!car_name %in% used_cars$car) %>%
   select(driver_name, car_name)
 
-openxlsx::write.xlsx(available_cars, file = "avail_cars.xlsx")
+#openxlsx::write.xlsx(available_cars, file = "avail_cars.xlsx")
 ```
 
 
