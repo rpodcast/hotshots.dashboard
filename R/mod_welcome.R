@@ -101,16 +101,34 @@ mod_welcome_ui <- function(id){
           maximizable = TRUE,
           fluidRow(
             col_12(
-              selectInput(
-                ns("plot_stat"),
-                "Select Plot Statistic",
-                choices = c("Total Race Points" = "points_running", 
-                            "Total Top 3 Finishes" = "top3_running",
-                            "Total DNF Finishes" = "dnf_running"),
-                selected = "points_running",
-                multiple = FALSE
+              fluidRow(
+                col_3(
+                  selectInput(
+                    ns("plot_stat"),
+                    "Select Plot Statistic",
+                    choices = c("Total Race Points" = "points_running", 
+                                "Total Top 3 Finishes" = "top3_running",
+                                "Total DNF Finishes" = "dnf_running"),
+                    selected = "points_running",
+                    multiple = FALSE
+                  )
+                ),
+                col_3(
+                  sliderInput(
+                    ns("plot_interval"),
+                    "Animation transition time (seconds)",
+                    min = 0.1,
+                    max = 1,
+                    value = 0.5,
+                    step = 0.1
+                  )
+                )
               ),
-              plotly::plotlyOutput(ns("points_plot"), height = "600px")
+              fluidRow(
+                col_12(
+                  plotly::plotlyOutput(ns("points_plot"), height = "600px")
+                )
+              )
             )
           )
         )
@@ -293,14 +311,35 @@ mod_welcome_server <- function(input, output, session, hotshot_stat_df){
         animationDuration = 2000)
   })
   
-  output$points_plot <- renderPlotly({
-    
+  # reactive for plot data
+  df_chart <- reactive({
     req(hotshot_stat_df())
     req(input$plot_stat)
     
     df2 <- gen_tidy_race_data(hotshot_stat_df())
-    
     df_chart <- gen_plot_data(df2, all_drivers = TRUE)
+    
+    df_chart <- dplyr::mutate(df_chart, plot_var = .data[[input$plot_stat]])
+    df_chart <- distinct(df_chart)
+    
+    # join additional player metadata
+    df_chart <- left_join(
+      df_chart,
+      select(player_data, player_name, plot_emoji),
+      by = "player_name"
+    )
+    
+    df_chart <- mutate(df_chart, plot_emoji2 = purrr::map_chr(plot_emoji, ~emo::ji(.x)))
+    return(df_chart)
+  })
+  
+  n_players <- reactive({
+    req(df_chart())
+    length(unique(df_chart()$player_name))
+  })
+  
+  xaxis_label <- reactive({
+    req(input$plot_stat)
     
     if (input$plot_stat == "points_running") {
       xaxis_label <- "Total Points"
@@ -310,71 +349,69 @@ mod_welcome_server <- function(input, output, session, hotshot_stat_df){
       xaxis_label <- "Total DNF"
     }
     
-    df_chart <- dplyr::mutate(df_chart, plot_var = .data[[input$plot_stat]])
-    df_chart <- distinct(df_chart)
+    return(xaxis_label)
+  })
+  
+  plot_main_obj <- reactive({
+    req(df_chart())
+    req(n_players())
+    req(xaxis_label())
     
-    # join additoinal player metadata
-    df_chart <- left_join(
-      df_chart,
-      select(player_data, player_name, plot_emoji),
-      by = "player_name"
-    )
-    
-    df_chart <- mutate(df_chart, plot_emoji2 = purrr::map_chr(plot_emoji, ~emo::ji(.x)))
-    
-    n_players <- length(unique(df_chart$player_name))
-    
-    plot_ly(df_chart) %>%
-      # add_segments(
-      #   y = ~player_name,
-      #   yend = ~player_name,
-      #   x = ~plot_var,
-      #   xend = 0,
-      #   color = ~player_name,
-      #   colors = RColorBrewer::brewer.pal(n_players, "Set3"),
-      #   frame = ~frame_label_fct,
-      #   line = list(width = 40)
-      # ) %>%
-      # add_markers(
-      #   x = ~plot_var,
-      #   y = ~player_name,
-      #   color = ~player_name,
-      #   colors = RColorBrewer::brewer.pal(n_players, "Set3"),
-      #   size = I(90),
-      #   frame = ~frame_label_fct
-      # ) %>%
+    plot_ly(df_chart(), source = "running_plot") %>%
       add_text(
         x = ~plot_var,
         y = ~player_name,
         text = ~plot_emoji2,
         color = ~player_name,
-        colors = RColorBrewer::brewer.pal(n_players, "Set3"),
-        size = I(50),
-        frame = ~frame_label_fct
+        colors = RColorBrewer::brewer.pal(n_players(), "Set3"),
+        frame = ~frame_label_fct,
+        size = I(50)
+      ) %>%
+      layout(
+        showlegend = FALSE,
+        paper_bgcolor = '#5875D5',
+        plot_bgcolor = '#5875D5',
+        yaxis = list(title = "", color = '#ffffff', tickangle = -45, side = 'right'),
+        xaxis = list(title = xaxis_label(), color = '#ffffff'),
+        font = list(
+          color = '#ffffff',
+          family = "TTSupermolotNeue-Bold",
+          size = 16
+        )
+      )
+  })
+  
+  plot_final_obj <- reactive({
+    req(plot_main_obj())
+    req(input$plot_interval)
+    
+    # obtain desired animation interval time (convert to ms)
+    animation_interval <- 1000 * input$plot_interval
+
+    new_plot <- plot_main_obj() %>%
+      animation_opts(
+        frame = animation_interval,
+        easing = 'linear',
+        redraw = FALSE
+      ) %>%
+      animation_button(
+        x = 1.1, xanchor = 'right'
       ) %>%
       animation_slider(
         currentvalue = list(
           prefix = ""
         ),
         step = list(visible = FALSE)
-      ) %>%
-      animation_opts(
-        frame = 500,
-        easing = 'linear',
-        redraw = FALSE
-      ) %>%
-      layout(
-        showlegend = FALSE,
-        paper_bgcolor = '#5875D5',
-        plot_bgcolor = '#5875D5',
-        yaxis = list(title = "", color = '#ffffff', tickangle = -45),
-        xaxis = list(title = xaxis_label, color = '#ffffff'),
-        font = list(
-          color = '#ffffff',
-          family = "TTSupermolotNeue-Bold",
-          size = 16)
       )
+    
+    return(new_plot)
   })
+  
+  output$points_plot <- renderPlotly({
+    req(plot_final_obj())
+    plot_final_obj()
+  })
+  
 }
     
 ## To be copied in the UI
