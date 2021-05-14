@@ -16,6 +16,21 @@ gen_tidy_race_data <- function(raw_df) {
   return(df2)
 }
 
+#' @import dplyr
+#' @noRd
+gen_tidy_racers <- function(hotshot_data) {
+  df <- hotshot_data
+  df$tracks <- NULL
+  df$grand_prix <- NULL
+  
+  res <- df %>%
+    tibble::as_tibble(.) %>%
+    tidyr::unnest_wider(col = "drivers") %>%
+    tidyr::unnest_longer(col = "cars") %>%
+    tidyr::unnest_wider(col = "cars")
+  return(res)
+}
+
 #' @import tidyr
 #' @import dplyr
 gen_track_compare <- function(df2) {
@@ -57,6 +72,9 @@ add_margin_of_victory <- function(df2) {
   df2 <- left_join(df2, df_mov, by = c("grand_prix_fct", "direction_fct", "track_fct"))
   df2 <- left_join(df2, df_top3, by = c("grand_prix_fct", "direction_fct", "track_fct"))
   
+  df2 <- df2 %>%
+    mutate(player_margin_victory = ifelse(position == 1, margin_victory, NA))
+  
   return(df2)  
 }
 
@@ -70,7 +88,11 @@ gen_summary_gp_data <- function(df2) {
               n_first = sum(position == 1),
               n_second = sum(position == 2),
               n_third = sum(position == 3),
-              n_top3 = sum(position <= 3)) %>%
+              n_top3 = sum(position <= 3),
+              avg_position = mean(position, na.rm = TRUE),
+              med_position = median(position, na.rm = TRUE),
+              avg_margin_victory = mean(player_margin_victory, na.rm = TRUE),
+              avg_time_from_first = mean(diff_time, na.rm = TRUE)) %>%
     arrange(grand_prix_fct, desc(direction), desc(race_points_total), desc(n_first), desc(n_second), desc(n_third)) %>%
     ungroup() %>%
     group_by(grand_prix_fct, direction) %>%
@@ -82,6 +104,7 @@ gen_summary_gp_data <- function(df2) {
 }
 
 gen_summary_overall <- function(df_summary1) {
+  
   df_summary2 <- df_summary1 %>%
     group_by(grand_prix_fct, player_name) %>%
     summarize(total_gp_points = sum(points, na.rm = TRUE),
@@ -107,15 +130,101 @@ gen_summary_overall <- function(df_summary1) {
   return(df_summary2)
 }
 
-gen_grandprix_summary <- function(df2) {
-  df_summary3 <- df2 %>%
-    group_by(grand_prix_fct, direction_fct) %>%
-    summarize(avg_margin_victory = mean(margin_victory),
-              avg_top_3_sep = mean(top_3_sep),
-              n_racers = length(unique(player_name))) %>%
+gen_grandprix_summary <- function(df2, direction_group = TRUE) {
+  # prep a grouped version of data set
+  if (direction_group) {
+    df_g <- df2 %>%
+      group_by(grand_prix_fct, direction_fct)
+  } else {
+    df_g <- df2 %>%
+      group_by(grand_prix_fct)
+  }
+  
+  # obtain the number of unique winners
+  df_winners <- df_g %>%
+    filter(position == 1) %>%
+    summarize(n_unique_winners = length(unique(player_name))) %>%
     ungroup()
+  
+  df_summary3 <- df_g %>%
+    summarize(avg_margin_victory = mean(margin_victory, na.rm = TRUE),
+              avg_top_3_sep = mean(top_3_sep, na.rm = TRUE),
+              n_racers = length(unique(player_name))) %>%
+    ungroup() %>%
+    left_join(df_winners)
 
   return(df_summary3)
+}
+
+gen_track_summary <- function(df2, direction_group = TRUE) {
+  # prep a grouped version of data set
+  if (direction_group) {
+    df_g <- df2 %>%
+      group_by(grand_prix_fct, track_fct, direction_fct)
+  } else {
+    df_g <- df2 %>%
+      group_by(grand_prix_fct, track_fct)
+  }
+}
+
+gen_player_car_stats <- function(df2) {
+  # obtain player performance based on type of car
+  df_cars <- gen_tidy_racers(hotshot_data) %>%
+    select(driver = driver_name, car = car_name, type, driver_img_url, car_img_url)
+  
+  df_player_stats3 <- df2 %>%
+    left_join(df_cars, by = c("driver", "car")) %>%
+    group_by(player_name, type) %>%
+    summarize(n_races = length(type),
+              n_first = sum(position == 1L),
+              n_top3 = sum(position <= 3),
+              avg_position = mean(position, na.rm = TRUE),
+              avg_margin_victory = mean(player_margin_victory, na.rm = TRUE)) %>%
+    ungroup()
+  
+  return(df_player_stats3)
+}
+
+gen_player_driver_stats <- function(df2) {
+  # obtain player performance based on type of car
+  df_cars <- gen_tidy_racers(hotshot_data) %>%
+    select(driver = driver_name, car = car_name, type, driver_img_url, car_img_url)
+  
+  df_player_stats3 <- df2 %>%
+    left_join(df_cars, by = c("driver", "car")) %>%
+    group_by(player_name, driver) %>%
+    summarize(n_races = length(type),
+              n_first = sum(position == 1L),
+              n_top3 = sum(position <= 3),
+              avg_position = mean(position, na.rm = TRUE),
+              avg_margin_victory = mean(player_margin_victory, na.rm = TRUE)) %>%
+    ungroup()
+  
+  return(df_player_stats3)
+}
+
+gen_player_summary <- function(df2) {
+  df_player_stats1 <- df2 %>%
+    group_by(player_name) %>%
+    summarize(n_races = length(position),
+              n_first = sum(position == 1L),
+              n_top3 = sum(position <= 3),
+              avg_position = mean(position, na.rm = TRUE),
+              med_position = median(position, na.rm = TRUE),
+              avg_margin_victory = mean(player_margin_victory, na.rm = TRUE),
+              avg_time_from_first = mean(diff_time, na.rm = TRUE)) %>%
+    ungroup()
+  
+  # obtain how many grand prix the players won
+  df_player_stats2 <- df2 %>%
+    gen_summary_gp_data() %>%
+    gen_summary_overall() %>%
+    select(player_name, n_first_gp)
+  
+  df_final <- left_join(df_player_stats1, df_player_stats2, by = "player_name") %>%
+
+  return(df_final)
+  
 }
 
 gen_overall_summary <- function(df2) {

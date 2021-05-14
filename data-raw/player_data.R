@@ -6,12 +6,12 @@ player_data <- tibble::tribble(
   "FrenchguyCH", "Yannick Mauray", "ch", "FrenchguyCH.jpg", "sport_utility_vehicle",
   "rpodcast", "Eric Nantz", "us", "rpodcast.jpg", "racing_car",
   "bigcalm", "", "gb", "bigcalm.png", "taxi",
-  "TwoD", "", "se", "TwoD.png", "articulated_lorry",
+  "TwoD", "Henrik", "se", "TwoD.png", "articulated_lorry",
   "madhens", "Monica Ayhens-Madon", "us", "madhens.jpg", "tractor",
-  "TheUnwiseGeek", "", "us", "TheUnwiseGeek.png", "police_car",
+  "TheUnwiseGeek", "John Madon", "us", "TheUnwiseGeek.jpeg", "police_car",
   "popey", "Alan Pope", "gb", "popey.jpg", "bus",
-  "bigpod", "", "si", "bigpod.png", "minibus",
-  "crendo", "", "us", "", "motor_scooter"
+  "bigpod", "BigPod", "si", "bigpod.png", "minibus",
+  "crendo", "Unknown", "us", "crendo.png", "motor_scooter"
 )
 
 

@@ -22,11 +22,19 @@ mod_trackstats_ui <- function(id){
       )
     ),
     fluidRow(
-      col_8(
+      col_12(
         h4("Each grand prix in our Hotshot Racing League consists of 4 challenging tracks each coming from a unique region. Here's a breakdown of the tracks used in each Grand Prix raced as of today:")
-      ),
-      col_4(
+      )
+    ),
+    fluidRow(
+      col_12(
         reactable::reactableOutput(ns("track_table"))
+      )
+    ),
+    fluidRow(
+      col_12(
+        br(),
+        br()
       )
     ),
     fluidRow(
@@ -86,12 +94,28 @@ mod_trackstats_server <- function(input, output, session, hotshot_stat_df){
       e_charts() %>%
       e_boxplot(margin_victory) %>%
       e_tooltip(trigger = "item") %>%
-      e_theme("dark") %>%
+      e_title(
+        text = "Average Margin of Victory (seconds) by Grand Prix",
+        subtext = "Pooled over both normal and mirrod versions",
+        left = "center"
+      ) %>%
       e_x_axis(
-        nameTextStyle = list(
-          fontSize = 20
+        axisLabel = list(
+          show = TRUE,
+          textStyle = list(
+            fontSize = 14
+          )
         )
-      )
+      ) %>%
+      e_y_axis(
+        axisLabel = list(
+          show = TRUE,
+          textStyle = list(
+            fontSize = 14
+          )
+        )
+      ) %>%
+      e_theme("dark")
     
     my_chart
   })
@@ -115,6 +139,27 @@ mod_trackstats_server <- function(input, output, session, hotshot_stat_df){
       e_charts() %>%
       e_boxplot(margin_victory) %>%
       e_tooltip(trigger = "item") %>%
+      e_title(
+        text = "Average Margin of Victory (seconds) by Region",
+        subtext = "Pooled over both normal and mirrod versions",
+        left = "center"
+      ) %>%
+      e_x_axis(
+        axisLabel = list(
+          show = TRUE,
+          textStyle = list(
+            fontSize = 14
+          )
+        )
+      ) %>%
+      e_y_axis(
+        axisLabel = list(
+          show = TRUE,
+          textStyle = list(
+            fontSize = 14
+          )
+        )
+      ) %>%
       e_theme("dark")
     
     my_chart

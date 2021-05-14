@@ -10,9 +10,20 @@
 #' @import countup
 #' @import plotly
 #' @import echarts4r
+#' @import waiter
 mod_welcome_ui <- function(id){
   ns <- NS(id)
+  
+  # create the HTML for loading screen
+  gif <- "https://filedn.com/lXHQDOYF1yHVL1Tsc38wxx7/assets/hotshot_clip_10fps.gif"
+  loading_gif <- tagList(
+    h3("Starting up Hotshots Dashboard engine..."),
+    img(src = gif, height = "520px")
+  )
+  
   tagList(
+    waiter_show_on_load(html = loading_gif),
+    waiter_hide_on_render(ns("mov")),
     fluidRow(
       col_12(
         jumbotron(
@@ -25,14 +36,6 @@ mod_welcome_ui <- function(id){
         )
       )
     ),
-    # fluidRow(
-    #   col_12(
-    #     div(
-    #       align = "center",
-    #       h1("High-level statistics!")
-    #     )
-    #   )
-    # ),
     fluidRow(
       col_12(
         box(
@@ -371,7 +374,8 @@ mod_welcome_server <- function(input, output, session, hotshot_stat_df){
         showlegend = FALSE,
         paper_bgcolor = '#5875D5',
         plot_bgcolor = '#5875D5',
-        yaxis = list(title = "", color = '#ffffff', tickangle = -45, side = 'right'),
+        yaxis = list(title = "", color = '#ffffff', tickangle = 0, side = 'right',
+                     gridwidth = 10),
         xaxis = list(title = xaxis_label(), color = '#ffffff'),
         font = list(
           color = '#ffffff',
@@ -399,8 +403,9 @@ mod_welcome_server <- function(input, output, session, hotshot_stat_df){
       ) %>%
       animation_slider(
         currentvalue = list(
-          prefix = ""
+          prefix = "Race Track: "
         ),
+        font = list(color = '#5875D5'),
         step = list(visible = FALSE)
       )
     

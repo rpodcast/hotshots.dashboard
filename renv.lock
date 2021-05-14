@@ -624,13 +624,6 @@
       "Repository": "RSPM",
       "Hash": "a399e4773075fc2375b71f45fca186c4"
     },
-    "openxlsx": {
-      "Package": "openxlsx",
-      "Version": "4.2.3",
-      "Source": "Repository",
-      "Repository": "RSPM",
-      "Hash": "2253a430965e222d11a2f9277cd34c2e"
-    },
     "packrat": {
       "Package": "packrat",
       "Version": "0.5.0",
@@ -752,15 +745,10 @@
     },
     "reactablefmtr": {
       "Package": "reactablefmtr",
-      "Version": "0.1.0",
-      "Source": "GitHub",
-      "RemoteType": "github",
-      "RemoteHost": "api.github.com",
-      "RemoteUsername": "kcuilla",
-      "RemoteRepo": "reactablefmtr",
-      "RemoteRef": "main",
-      "RemoteSha": "611b6af7ecb2337fa8d9635eecca79b1ed7ea17e",
-      "Hash": "d5c5332fbea4149a32fef00d0613555a"
+      "Version": "0.2.0",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "bc918bfc38bbc43ab110f4122b68f45a"
     },
     "rematch2": {
       "Package": "rematch2",
@@ -799,10 +787,10 @@
     },
     "rmarkdown": {
       "Package": "rmarkdown",
-      "Version": "2.6",
+      "Version": "2.8",
       "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "bc4bac38960b446c183957bfd563e763"
+      "Repository": "RSPM",
+      "Hash": "f518ba47713f92d0d603eec7c6888faf"
     },
     "roxygen2": {
       "Package": "roxygen2",
@@ -946,10 +934,10 @@
     },
     "tinytex": {
       "Package": "tinytex",
-      "Version": "0.29",
+      "Version": "0.31",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "f0b0ba735febac9a8344253ae6fa93f5"
+      "Hash": "25b572f764f3c19fef9aac33b5724f3d"
     },
     "usethis": {
       "Package": "usethis",
@@ -981,10 +969,10 @@
     },
     "waiter": {
       "Package": "waiter",
-      "Version": "0.2.0",
+      "Version": "0.2.1",
       "Source": "Repository",
       "Repository": "RSPM",
-      "Hash": "58bd688fb765cf778b633df0e2502003"
+      "Hash": "a8742a4d14e77d6464614b47a1e9921e"
     },
     "waldo": {
       "Package": "waldo",

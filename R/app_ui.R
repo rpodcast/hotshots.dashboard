@@ -40,16 +40,7 @@ app_ui <- function(request) {
     dashboardPage(
       freshTheme = my_theme,
       header = dashboardHeader(
-        skin = "light",
-        tagList(
-          shinyWidgets::actionBttn(
-            "refresh",
-            "Refresh Data",
-            style = "unite",
-            icon = icon("download"),
-            size = "sm"
-          )
-        )
+        skin = "light"
       ),
       sidebar = dashboardSidebar(
         skin = "light",
@@ -92,12 +83,6 @@ app_ui <- function(request) {
       fullscreen = TRUE,
       scrollToTop = TRUE
     )
-    # fluidPage(
-    #   #theme = my_theme,
-    #   h1("hotshots.dashboard"),
-    #   p("this is some text")
-    # )
-    
   )
 }
 
@@ -121,12 +106,10 @@ golem_add_external_resources <- function(){
       path = app_sys('app/www'),
       app_title = 'hotshots.dashboard'
     ),
-    #gfonts::use_font("roboto", "inst/app/www/css/roboto.css")
-    #gfonts::use_font("henny-penny", "inst/app/www/css/henny-penny.css")
-    #gfonts::use_font("ubuntu", "inst/app/www/css/ubuntu.css")
     tags$link(rel = "stylesheet", type = "text/css", href = "www/css/TTSupermolotNeue.css"),
-    tags$style(HTML("body {font-family: 'TTSupermolotNeue-Bold', sans-serif;}" ))
+    tags$style(HTML("body {font-family: 'TTSupermolotNeue-Bold', sans-serif;}" )),
     # Add here other external resources
     # for example, you can add shinyalert::useShinyalert() 
+    waiter::use_waiter()
   )
 }

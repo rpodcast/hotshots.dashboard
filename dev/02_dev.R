@@ -22,7 +22,7 @@ usethis::use_package( "dplyr" )
 usethis::use_package( "purrr" )
 usethis::use_package( "stringi" )
 usethis::use_package( "reactable" )
-
+usethis::use_package("waiter")
 
 ## Add modules ----
 ## Create a module infrastructure in R/
@@ -49,6 +49,8 @@ golem::add_css_file( "custom" )
 usethis::use_data_raw( name = "hotshot_data", open = FALSE ) 
 usethis::use_data_raw( name = "country_data", open = FALSE ) 
 usethis::use_data_raw( name = "player_data", open = FALSE )
+usethis::use_data_raw( name = "gp_results", open = FALSE)
+
 ## Tests ----
 ## Add one line by test you want to create
 usethis::use_test( "app" )

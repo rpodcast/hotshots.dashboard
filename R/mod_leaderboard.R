@@ -9,22 +9,26 @@
 #' @importFrom shiny NS tagList 
 #' @import reactable
 #' @import dplyr
+#' @import echarts4r
+#' @import shinyWidgets
 mod_leaderboard_ui <- function(id){
   ns <- NS(id)
   tagList(
     fluidRow(
       col_12(
-        h1("Racing Leaderboard!"),
         uiOutput(ns("title"))
       )
     ),
     fluidRow(
-      col_6(
-        reactable::reactableOutput(ns("leaderboard_table")),
-        verbatimTextOutput(ns("row_print"))
-      ),
-      col_6(
-        reactable::reactableOutput(ns("gp_table")),
+      col_12(
+        reactable::reactableOutput(ns("leaderboard_table"))
+      )
+    ),
+    fluidRow(
+      col_12(
+        br(),
+        br(),
+        uiOutput(ns("player_card_placeholder"))
       )
     )
   )
@@ -38,13 +42,17 @@ mod_leaderboard_server <- function(input, output, session, hotshot_stat_df){
   
   output$title <- renderUI({
     req(hotshot_stat_df())
+    
     # derive number of races completed
     n_races <- hotshot_stat_df() %>%
       select(grand_prix, track, direction) %>%
       distinct() %>%
       nrow(.)
     
-    h2(glue::glue("Here is the leaderboard after {n_races} races. Click the little arrows to see individual grand prix details for a player"))
+    tagList(
+      h2(glue::glue("Leaderboard after {n_races} races!")),
+      h4("Click the little arrows to see individual grand prix details for a player")
+    )
   })
   
   df_position <- reactive({
@@ -58,11 +66,38 @@ mod_leaderboard_server <- function(input, output, session, hotshot_stat_df){
     return(df_position)
   })
   
+  player_stats_df <- reactive({
+    req(df_position())
+    df <- hotshot_stat_df() %>%
+      gen_tidy_race_data() %>%
+      gen_player_summary() %>%
+      
+      return(df)
+  })
+  
+  player_car_stats_df <- reactive({
+    req(df_position())
+    df <- hotshot_stat_df() %>%
+      gen_tidy_race_data() %>%
+      gen_player_car_stats() %>%
+      
+      return(df)
+  })
+  
+  player_driver_stats_df <- reactive({
+    req(df_position())
+    df <- hotshot_stat_df() %>%
+      gen_tidy_race_data() %>%
+      gen_player_driver_stats() %>%
+      
+      return(df)
+  })
+  
   df_overall <- reactive({
     # generate overall data
-    req(hotshot_stat_df())
     req(df_position())
-    
+    req(player_stats_df())
+
     df_overall <- gen_summary_overall(df_position()) %>%
       arrange(desc(total_points)) %>%
       mutate(position = row_number()) %>%
@@ -75,7 +110,9 @@ mod_leaderboard_server <- function(input, output, session, hotshot_stat_df){
       )) %>%
       left_join(player_data, by = "player_name") %>%
       left_join(country_data, by = "country") %>%
-      select(position_emo, player_name, country, url, total_points)
+      left_join(
+        select(player_stats_df(), player_name, avg_position, avg_margin_victory, avg_time_from_first)
+      )
     
     return(df_overall)
   })
@@ -103,16 +140,181 @@ mod_leaderboard_server <- function(input, output, session, hotshot_stat_df){
     return(player_name)
   })
   
-  output$gp_table <- reactable::renderReactable({
-    req(df_position())
-    create_gp_table(df_position(), player_selected())
+  player_metadata <- reactive({
+    req(player_selected())
+    player_data_sub <- player_data %>%
+      mutate(image_path = glue::glue("www/player_pics/{avatar}")) %>%
+      filter(player_name == player_selected())
+    
+    return(player_data_sub)
   })
   
-  output$row_print <- renderPrint({
-    req(player_selected())
-    player_selected()
+  output$player_card_placeholder <- renderUI({
+    req(player_metadata())
+    req(player_stats_df())
+    req(player_car_stats_df())
+    req(player_driver_stats_df())
+    
+    userBox(
+      title = userDescription(
+        title = pull(player_metadata(), full_name),
+        subtitle = player_selected(),
+        type = 1,
+        image = pull(player_metadata(), image_path)
+      ),
+      status = "primary",
+      width = 12,
+      gradient = TRUE,
+      background = "primary",
+      boxToolSize = "xl",
+      tagList(
+        fluidRow(
+          col_12(
+            h4("Performance breakdown by car type")
+          )
+        ),
+        fluidRow(
+          col_6(
+            echarts4r::echarts4rOutput(ns("car_finish_bars"))
+          ),
+          col_6(
+            echarts4r::echarts4rOutput(ns("car_type_boxplots"))
+          )
+        ),
+        fluidRow(
+          col_12(
+            h4("Performance breakdown by car driver"),
+            echarts4r::echarts4rOutput(ns("driver_bars"))
+          )
+        ),
+
+      ),
+      footer = NULL
+    )
   })
- 
+  
+  output$car_finish_bars <- echarts4r::renderEcharts4r({
+    req(hotshot_stat_df())
+    req(player_selected())
+    req(player_car_stats_df())
+    
+    plot_df <- filter(player_car_stats_df(), player_name == player_selected())
+    
+    my_chart <- plot_df %>%
+      e_charts(type) %>%
+      e_bar(avg_position) %>%
+      e_axis_labels(y = "Avg Race Finish", x = "Car Type") %>%
+      e_tooltip(
+        trigger = "item", 
+        formatter = e_tooltip_item_formatter(
+          style = "decimal",
+          digits = 3
+        )
+      ) %>% 
+      e_x_axis(
+        axisLabel = list(
+          show = TRUE,
+          textStyle = list(
+            fontSize = 14
+          )
+        )
+      ) %>%
+      e_y_axis(
+        axisLabel = list(
+          show = TRUE,
+          textStyle = list(
+            fontSize = 14
+          )
+        )
+      ) %>%
+      e_legend(show = FALSE) %>%
+      e_theme("dark")
+      
+    my_chart
+  })
+  
+  output$car_type_boxplots <- echarts4r::renderEcharts4r({
+    req(hotshot_stat_df())
+    req(player_selected())
+    
+    # obtain player performance based on type of car
+    df_cars <- gen_tidy_racers(hotshot_data) %>%
+      select(driver = driver_name, car = car_name, type, driver_img_url, car_img_url)
+    
+    plot_df <- hotshot_stat_df() %>%
+      gen_tidy_race_data() %>%
+      left_join(df_cars, by = c("driver", "car")) %>%
+      filter(player_name == player_selected())
+    
+    my_chart <- plot_df %>%
+      group_by(type) %>%
+      e_charts() %>%
+      e_boxplot(player_margin_victory) %>%
+      e_title(
+        text = "Average Margin of Victory (seconds) by Car Type",
+        left = "center"
+      ) %>%
+      e_x_axis(
+        axisLabel = list(
+          show = TRUE,
+          textStyle = list(
+            fontSize = 14
+          )
+        )
+      ) %>%
+      e_y_axis(
+        axisLabel = list(
+          show = TRUE,
+          textStyle = list(
+            fontSize = 14
+          )
+        )
+      ) %>%
+      e_tooltip(trigger = "item") %>%
+      e_theme("dark")
+    
+    my_chart
+  })
+  
+  output$driver_bars <- echarts4r::renderEcharts4r({
+    req(hotshot_stat_df())
+    req(player_selected())
+    req(player_driver_stats_df())
+    
+    plot_df <- filter(player_driver_stats_df(), player_name == player_selected())
+    
+    my_chart <- plot_df %>%
+      e_charts(driver) %>%
+      e_bar(avg_position) %>%
+      e_axis_labels(y = "Avg Race Finish", x = "Driver") %>%
+      e_tooltip(
+        trigger = "item", 
+        formatter = e_tooltip_item_formatter(
+          style = "decimal",
+          digits = 3
+        )
+      ) %>% 
+      e_x_axis(
+        axisLabel = list(
+          show = TRUE,
+          textStyle = list(
+            fontSize = 20
+          )
+        )
+      ) %>%
+      e_y_axis(
+        axisLabel = list(
+          show = TRUE,
+          textStyle = list(
+            fontSize = 20
+          )
+        )
+      ) %>%
+      e_legend(show = FALSE) %>%
+      e_theme("dark")
+    
+    my_chart
+  })
 }
     
 ## To be copied in the UI
