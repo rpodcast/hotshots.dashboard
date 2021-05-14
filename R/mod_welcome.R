@@ -29,9 +29,8 @@ mod_welcome_ui <- function(id){
         jumbotron(
           title = "Hotshot Racing Dashboard!",
           lead = "Welcome to the Official Wimpy's World of Linux Gaming Most Official Unofficial Hotshot Racing League Spring Championship (WWOLGMOUHRLSC) Dashboard!  We've been working hard to track the results of each race and other geeky stats with a multitude of over-engineered apps and utilities. Would you expect anything less from a bunch of Linux and open-source enthusiasts?  I think not!",
-          "If you are viewing this dashboard on a race day, hit the refresh data button above to ensure you have the most up-to-date snapshot of data.",
           status = "primary",
-          btnName = "Watch previous races!",
+          btnName = "Watch the replays on YouTube!",
           href = "https://www.youtube.com/channel/UC6D0aBP5pnWTGhQAvEmhUNw"
         )
       )
