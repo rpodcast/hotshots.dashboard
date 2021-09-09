@@ -61,6 +61,17 @@ COPY library-scripts/.Rprofile-vscode /renv/.Rprofile-vscode
 RUN apt-get update \
     && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends libtesseract-dev libleptonica-dev tesseract-ocr-eng libmagick++-dev libicu-dev libfreetype6-dev libglu1-mesa-dev libpng-dev libgl1-mesa-dev zlib1g-dev imagemagick libpoppler-cpp-dev
+    
+# install phantomjs
+RUN apt-get update \
+    && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install bzip2 curl libfontconfig
+
+RUN set -x \
+    && curl -SL https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 > phantom.tar.bz2 \
+    && bzip2 -d ./phantom.tar.bz2 \
+    && tar -xvf ./phantom.tar -C /usr/local --strip-components=1 \
+    && rm phantom.tar
 
 # [Optional] Set the default user. Omit if you want to keep the default as root.
 USER $USERNAME
