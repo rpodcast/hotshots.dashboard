@@ -470,6 +470,18 @@
       "Repository": "RSPM",
       "Hash": "6fdaa86d0700f8b3e92ee3c445a5a10d"
     },
+    "httpgd": {
+      "Package": "httpgd",
+      "Version": "1.1.1",
+      "Source": "GitHub",
+      "RemoteType": "github",
+      "RemoteHost": "api.github.com",
+      "RemoteUsername": "nx10",
+      "RemoteRepo": "httpgd",
+      "RemoteRef": "master",
+      "RemoteSha": "fd72a3cd03ed4f19a9e903a5e1dcda534aea2bef",
+      "Hash": "a5e9932fe58d74875b5aadca6e87cbfc"
+    },
     "httpuv": {
       "Package": "httpuv",
       "Version": "1.5.5",
@@ -896,6 +908,13 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "b227d13e29222b4574486cfcbde077fa"
+    },
+    "systemfonts": {
+      "Package": "systemfonts",
+      "Version": "1.0.2",
+      "Source": "Repository",
+      "Repository": "RSPM",
+      "Hash": "f2e17ba09737e2e7e2ec40fc1f9b6e08"
     },
     "testthat": {
       "Package": "testthat",
